@@ -2,7 +2,7 @@ package gol
 
 import (
 	"fmt"
-	// "io"
+	"io"
 	"log"
 	"math/rand"
 	"net"
@@ -50,19 +50,14 @@ func loadBalance(c net.Conn) {
 		return
 	}
 
-	serverChan := make(chan []byte)
-	clientChan := make(chan []byte)
 	serverDoneChan := make(chan bool)
 	clientDoneChan := make(chan bool)
 
-	go readBytes(sc, serverChan, serverDoneChan)
-	go readBytes(c, clientChan, clientDoneChan)
+	go copyStream(sc, c, serverDoneChan)
+	go copyStream(c, sc, clientDoneChan)
 
 	for {
 		select {
-
-		case fromServer := <-serverChan:
-			c.Write(fromServer)
 
 		case <-serverDoneChan:
 			defer sc.Close()
@@ -74,9 +69,6 @@ func loadBalance(c net.Conn) {
 			defer sc.Close()
 			return
 
-		case fromClient := <-clientChan:
-			sc.Write(fromClient)
-
 		default:
 
 		}
@@ -85,15 +77,9 @@ func loadBalance(c net.Conn) {
 	defer c.Close()
 }
 
-func readBytes(c net.Conn, bc chan []byte, dc chan bool) {
-	for {
-		data := make([]byte, 1024)
-		read, err := c.Read(data)
-		if err != nil || read == 0 {
-			log.Printf("Connection from %s closed; returning.", c.RemoteAddr())
-			dc <- true
-			return
-		}
-		bc <- data
-	}
+func copyStream(src, dst net.Conn, dc chan bool) {
+	// log.Println(src.LocalAddr().String())
+	// log.Println(src.RemoteAddr().String())
+	io.Copy(dst, src)
+	dc <- true
 }
