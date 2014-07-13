@@ -5,6 +5,18 @@ import (
 )
 
 type Server struct {
-	Ip   net.IP
-	Port int
+	Id      string
+	Ip      net.IP
+	Port    int
+	Healthy bool
 }
+
+type Vip struct {
+	Id        string
+	Ip        net.IP
+	Port      int
+	Algorithm Algorithm
+	Servers   []Server
+}
+
+type Algorithm func([]Server) (Server, error)
