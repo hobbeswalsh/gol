@@ -4,19 +4,23 @@ import (
 	"net"
 )
 
+type Listener struct {
+	Id   string
+	Ip   net.IP
+	Port int
+}
+
 type Server struct {
-	Id      string
-	Ip      net.IP
-	Port    int
+	Listener
 	Healthy bool
 }
 
 type Vip struct {
-	Id        string
-	Ip        net.IP
-	Port      int
-	Algorithm Algorithm
-	Servers   []Server
+	Listener
+	Algorithm   Algorithm
+	Healthcheck Healthcheck
+	Servers     []Server
 }
 
 type Algorithm func([]Server) (Server, error)
+type Healthcheck func(Server) bool
