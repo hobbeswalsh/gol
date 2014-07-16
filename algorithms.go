@@ -11,7 +11,14 @@ func RandomServer(ss []Server) (s Server, err error) {
 		err = errors.New(fmt.Sprintf("VIP has no servers behind it"))
 		return
 	}
-	s = ss[rand.Intn(len(ss))]
+	var healthyServers []Server
+	for _, server := range ss {
+		if server.Healthy {
+			healthyServers = append(healthyServers, server)
+		}
+	}
+	fmt.Println(healthyServers)
+	s = healthyServers[rand.Intn(len(healthyServers))]
 	return
 }
 

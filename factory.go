@@ -7,7 +7,13 @@ import (
 // NewVip constructs a new Vip struct from arguments. A new Vip should have
 // at least one server (to make logical sense), but it doesn't have to.
 // The Vip must be instantiated with a selection algorithm as well.
-func NewVip(id string, ip net.IP, port int, algorithm Algorithm, servers ...Server) (v Vip) {
+func NewVip(
+	id string,
+	ip net.IP,
+	port int,
+	algorithm Algorithm,
+	servers ...Server) (v Vip) {
+
 	v.Id = id
 	v.Ip = ip
 	v.Port = port

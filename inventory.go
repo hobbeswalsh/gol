@@ -30,3 +30,11 @@ func serverAlreadyBound(vip Vip, server Server) bool {
 	}
 	return false
 }
+
+func (s *Server) fail() {
+	s.Healthy = false
+}
+
+func (s *Server) succeed() {
+	s.Healthy = true
+}

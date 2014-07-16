@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 )
 
 func Listen(vip Vip) {
+	go loopHealthcheck(&vip, 10*time.Second)
 	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", vip.Ip, vip.Port))
 	if err != nil {
 		log.Fatal(err)
@@ -21,6 +23,7 @@ func Listen(vip Vip) {
 		// Handle the connection in a new goroutine.
 		// The loop then returns to accepting, so that
 		// multiple connections may be served concurrently.
+
 		go serve(vip, conn)
 	}
 }
