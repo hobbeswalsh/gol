@@ -27,13 +27,29 @@ func loopHealthcheck(s Server, hc Healthcheck, t time.Duration) {
 	for {
 		if !hc(&s) {
 			log.Printf("Failed health check for %s", s.Id)
-			fail(&s)
+			markDown(&s)
 		} else {
 			log.Printf("Succeeded health check for %s", s.Id)
-			succeed(&s)
+			markUp(&s)
 		}
 		time.Sleep(t)
 
 	}
 
+}
+
+func (s *Server) markDown() {
+	s.Healthy = false
+}
+
+func (s *Server) markUp() {
+	s.Healthy = false
+}
+
+func markDown(h Healthcheckable) {
+	h.markDown()
+}
+
+func markUp(h Healthcheckable) {
+	h.markUp()
 }

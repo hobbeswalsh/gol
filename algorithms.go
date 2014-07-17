@@ -6,19 +6,20 @@ import (
 	"math/rand"
 )
 
-func RandomServer(ss []Server) (s Server, err error) {
-	if len(ss) == 0 {
-		err = errors.New(fmt.Sprintf("VIP has no servers behind it"))
-		return
-	}
-	var healthyServers []Server
-	for _, server := range ss {
+func RandomServer(sm map[string]Server) (s Server, err error) {
+	var ids []string
+	for serverId, server := range sm {
 		if server.Healthy {
-			healthyServers = append(healthyServers, server)
+			ids = append(ids, serverId)
 		}
 	}
-	fmt.Println(healthyServers)
-	s = healthyServers[rand.Intn(len(healthyServers))]
+	if len(ids) == 0 {
+		err = errors.New(fmt.Sprintf("VIP has no healthy servers behind it"))
+		return
+	}
+
+	chosenId := ids[rand.Intn(len(ids))]
+	s = sm[chosenId]
 	return
 }
 
@@ -27,5 +28,6 @@ func (v *Vip) Select() (s Server, err error) {
 		err = errors.New(fmt.Sprintf("VIP %s has no servers behind it", v.Id))
 		return
 	}
+
 	return v.Algorithm(v.Servers)
 }

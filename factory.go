@@ -18,7 +18,10 @@ func NewVip(
 	v.Ip = ip
 	v.Port = port
 	v.Algorithm = algorithm
-	v.Servers = servers
+	v.Servers = make(map[string]Server)
+	for _, server := range servers {
+		v.Servers[server.Id] = server
+	}
 	v.Healthcheck = TCPHealthcheck
 	return
 }

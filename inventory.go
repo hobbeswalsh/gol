@@ -18,7 +18,7 @@ func AddServer(vipId string, server Server) error {
 		return errors.New(fmt.Sprintf("Server %s:%d is already bound to VIP %s", server.Ip, server.Port, vipId))
 	}
 
-	vip.Servers = append(vip.Servers, server)
+	vip.Servers[server.Id] = server
 	return nil
 }
 
