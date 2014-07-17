@@ -23,4 +23,4 @@ type Vip struct {
 }
 
 type Algorithm func([]Server) (Server, error)
-type Healthcheck func(Server) bool
+type Healthcheck func(*Server) bool
