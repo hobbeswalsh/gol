@@ -3,6 +3,7 @@ package gol
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 var vipMap = make(map[string]Vip)
@@ -50,6 +51,7 @@ func watchHealthChecks() {
 				serverMap[healthyServer] = server
 			}
 		default:
+			time.Sleep(time.Millisecond * 50)
 
 		}
 	}
