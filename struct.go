@@ -19,10 +19,10 @@ type Vip struct {
 	Listener
 	Algorithm   Algorithm
 	Healthcheck Healthcheck
-	Servers     map[string]Server
+	Servers     []string
 }
 
-type Algorithm func(map[string]Server) (Server, error)
+type Algorithm func([]string) (Server, error)
 type Healthcheck func(*Server) bool
 type Healthcheckable interface {
 	markDown()

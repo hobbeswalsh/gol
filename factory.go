@@ -12,17 +12,15 @@ func NewVip(
 	ip net.IP,
 	port int,
 	algorithm Algorithm,
-	servers ...Server) (v Vip) {
+	servers ...string) (v Vip) {
 
 	v.Id = id
 	v.Ip = ip
 	v.Port = port
 	v.Algorithm = algorithm
-	v.Servers = make(map[string]Server)
-	for _, server := range servers {
-		v.Servers[server.Id] = server
-	}
+	v.Servers = servers
 	v.Healthcheck = TCPHealthcheck
+	vipMap[id] = v
 	return
 }
 
@@ -34,5 +32,6 @@ func NewServer(id string, ip net.IP, port int) (s Server) {
 	s.Ip = ip
 	s.Port = port
 	s.Healthy = true // This will have to change once health checks are implemented.
+	serverMap[id] = s
 	return
 }

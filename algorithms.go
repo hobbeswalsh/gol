@@ -6,11 +6,12 @@ import (
 	"math/rand"
 )
 
-func RandomServer(sm map[string]Server) (s Server, err error) {
-	var ids []string
-	for serverId, server := range sm {
-		if server.Healthy {
-			ids = append(ids, serverId)
+func RandomServer(servers []string) (s Server, err error) {
+	var ids []Server
+	for _, server := range servers {
+		realServer := serverMap[server]
+		if realServer.Healthy {
+			ids = append(ids, realServer)
 		}
 	}
 	if len(ids) == 0 {
@@ -18,8 +19,7 @@ func RandomServer(sm map[string]Server) (s Server, err error) {
 		return
 	}
 
-	chosenId := ids[rand.Intn(len(ids))]
-	s = sm[chosenId]
+	s = ids[rand.Intn(len(ids))]
 	return
 }
 

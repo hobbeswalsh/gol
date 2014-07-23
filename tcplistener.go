@@ -9,6 +9,8 @@ import (
 
 func Listen(vip Vip) {
 	go startHealthchecks(vip, 10*time.Second)
+	go watchHealthChecks()
+
 	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", vip.Ip, vip.Port))
 	if err != nil {
 		log.Fatal(err)
