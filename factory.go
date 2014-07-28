@@ -36,7 +36,7 @@ func NewServer(id string, ip net.IP, port int) (s Server) {
 	s.Id = id
 	s.Ip = ip
 	s.Port = port
-	s.Healthy = false
+	s.Healthy = true
 	serverMap[id] = s
 	return
 }

@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func Listen(vip Vip) {
+func ListenTcp(vip Vip) {
 	go startHealthchecks(vip, 10*time.Second)
 	go watchHealthChecks()
 
