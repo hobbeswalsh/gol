@@ -2,6 +2,7 @@ package gol
 
 import (
 	"net"
+	"time"
 )
 
 // NewVip constructs a new Vip struct from arguments. A new Vip should have
@@ -20,6 +21,10 @@ func NewVip(
 	v.Algorithm = algorithm
 	v.Servers = servers
 	v.Healthcheck = TCPHealthcheck
+	v.HealthcheckInterval = time.Second * 15
+	v.FailureInterval = time.Second * 1
+	v.ConsecutiveFailuresBeforeDown = 3
+	v.ConsecutiveSuccessesUntilUp = 2
 	vipMap[id] = v
 	return
 }
@@ -31,7 +36,7 @@ func NewServer(id string, ip net.IP, port int) (s Server) {
 	s.Id = id
 	s.Ip = ip
 	s.Port = port
-	s.Healthy = true // This will have to change once health checks are implemented.
+	s.Healthy = false
 	serverMap[id] = s
 	return
 }

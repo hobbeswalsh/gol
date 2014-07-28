@@ -10,14 +10,14 @@ import (
 func serve(vip Vip, c net.Conn) {
 	s, err := vip.Select()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err.Error())
 		c.Close()
 		return
 	}
 
 	sc, err1 := net.Dial("tcp", fmt.Sprintf("%s:%d", s.Ip, s.Port))
 	if err1 != nil {
-		fmt.Println(err1)
+		log.Println(err1.Error())
 		c.Close()
 		return
 	}

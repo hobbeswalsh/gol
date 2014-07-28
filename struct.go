@@ -2,6 +2,7 @@ package gol
 
 import (
 	"net"
+	"time"
 )
 
 type Listener struct {
@@ -17,9 +18,13 @@ type Server struct {
 
 type Vip struct {
 	Listener
-	Algorithm   Algorithm
-	Healthcheck Healthcheck
-	Servers     []string
+	HealthcheckInterval           time.Duration
+	FailureInterval               time.Duration
+	ConsecutiveFailuresBeforeDown int
+	ConsecutiveSuccessesUntilUp   int
+	Algorithm                     Algorithm
+	Healthcheck                   Healthcheck
+	Servers                       []string
 }
 
 type Algorithm func([]string) (Server, error)

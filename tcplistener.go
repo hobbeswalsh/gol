@@ -20,7 +20,8 @@ func Listen(vip Vip) {
 		// Wait for a connection.
 		conn, err := l.Accept()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err.Error())
+			continue
 		}
 		// Handle the connection in a new goroutine.
 		// The loop then returns to accepting, so that

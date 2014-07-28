@@ -20,20 +20,34 @@ func TCPHealthcheck(s *Server) bool {
 func startHealthchecks(v Vip, t time.Duration) {
 	for _, server := range v.Servers {
 		actualServer := serverMap[server]
-		go loopHealthcheck(actualServer, v.Healthcheck, t)
+		go loopHealthcheck(actualServer, v, t)
 	}
 }
 
-func loopHealthcheck(s Server, hc Healthcheck, t time.Duration) {
+func loopHealthcheck(s Server, v Vip, t time.Duration) {
+	var failures = 0
+	var successes = 0
 	for {
-		if !hc(&s) {
+		if !v.Healthcheck(&s) {
+			failures += 1
 			log.Printf("Failed health check for %s", s.Id)
-			unhealthyChan <- s.Id
+			if failures >= v.ConsecutiveFailuresBeforeDown {
+				log.Printf("Setting server %s to UNHEALTHY", s.Id)
+				successes = 0
+				unhealthyChan <- s.Id
+			}
+
+			time.Sleep(v.FailureInterval)
 		} else {
+			successes += 1
+			failures = 0
 			log.Printf("Succeeded health check for %s", s.Id)
-			healthyChan <- s.Id
+			if successes >= v.ConsecutiveSuccessesUntilUp {
+				log.Printf("Setting server %s to HEALTHY", s.Id)
+				healthyChan <- s.Id
+			}
+			time.Sleep(v.HealthcheckInterval)
 		}
-		time.Sleep(t)
 
 	}
 
