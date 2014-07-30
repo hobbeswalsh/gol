@@ -7,28 +7,28 @@ import (
 	"net/http"
 )
 
-func serveHttp(
+func dispatchHttpRequest(
 	vip Vip,
-	url string,
-	w http.ResponseWriter,
-	req *http.Request) {
+	req *http.Request,
+	c chan *http.Response,
+	dc chan bool) {
 
 	s, err := vip.Select()
 	if err != nil {
-		log.Println(err.Error())
-		return
-	}
-	r, err1 := http.Get(
-		fmt.Sprintf("http://%s:%d%s", s.Ip, s.Port, url))
-	if err1 != nil {
-		log.Println(err1.Error())
-		return
-	}
 
-	h := w.Header()
-	h.Add("Content-Length", string(r.ContentLength))
-	h.Add("Status", "200")
-	err2 := r.Write(w)
-	fmt.Println(err2)
+		log.Println(err.Error())
+		dc <- true
+		return
+	}
+	r, fetchError := http.Get(
+		fmt.Sprintf("http://%s:%d%s", s.Ip, s.Port, req.URL.Path))
+
+	if fetchError != nil {
+		fmt.Println(fetchError)
+		dc <- true
+		return
+	}
+	c <- r
+
 	return
 }
